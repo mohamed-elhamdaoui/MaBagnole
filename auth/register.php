@@ -1,11 +1,46 @@
+<?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+require_once '../config.php';
+
+
+$error = "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $nom    = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $email  = $_POST['email'];
+    $pass   = $_POST['password'];
+    $con_pass = $_POST["confirm_password"];
+
+
+    if ($pass !== $con_pass) {
+        $error = "Les mots de passe ne sont pas identiques";
+        //} elseif (strlen($pass) < 8) {
+        //     $error = "Le mot de passe doit contenir au moins 8 caractères";
+    } else {
+        $newClient = new Client($nom, $prenom, $email, $pass);
+        if ($newClient->register()) {
+            header('Location: login.php?success=1');
+            exit();
+        } else {
+            $error = "Cet email est déjà utilisé";
+        }
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription - MaBagnole</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-slate-50 min-h-screen flex items-center justify-center py-10 px-4">
 
     <div class="max-w-xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
@@ -18,24 +53,24 @@
                 <p class="text-gray-400 text-sm">Rejoignez-nous pour réserver votre prochain véhicule.</p>
             </div>
 
-            <form action="votre_logique_inscription.php" method="POST" class="space-y-4">
-                
+            <form action="" method="POST" class="space-y-4">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Prénom</label>
-                        <input type="text" name="firstname" required 
+                        <input type="text" name="prenom" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nom</label>
-                        <input type="text" name="lastname" required 
+                        <input type="text" name="nom" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Email</label>
-                    <input type="email" name="email" required 
+                    <input type="email" name="email" required
                         class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all"
                         placeholder="exemple@mail.com">
                 </div>
@@ -43,12 +78,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Mot de passe</label>
-                        <input type="password" name="password" required 
+                        <input type="password" name="password" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Confirmation</label>
-                        <input type="password" name="confirm_password" required 
+                        <input type="password" name="confirm_password" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all">
                     </div>
                 </div>
@@ -60,7 +95,7 @@
                     </label>
                 </div>
 
-                <button type="submit" 
+                <button type="submit"
                     class="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
                     Finaliser l'inscription
                 </button>
@@ -68,7 +103,7 @@
 
             <div class="mt-8 pt-6 border-t border-gray-100 text-center">
                 <p class="text-sm text-gray-500">
-                    Déjà un compte ? 
+                    Déjà un compte ?
                     <a href="login.php" class="text-red-600 font-bold hover:underline">Connectez-vous</a>
                 </p>
             </div>
@@ -76,4 +111,5 @@
     </div>
 
 </body>
+
 </html>
