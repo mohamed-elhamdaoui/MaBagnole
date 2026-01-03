@@ -4,38 +4,81 @@ require_once '../config.php';
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
+    //insersionnn
+    if (isset($_POST["btn_add"])) {
+        $marque = $_POST['marque'];;
+        $modele = $_POST['modele'];
+        $prix = $_POST['prix_journalier'];;
+        $cat_id = $_POST['categorie_id'];;
+        $transmission  = $_POST['boite_vitesse'];;
+        $carburant = $_POST['carburant'];
+        $places = $_POST['nb_places'];
+        $image = $_POST['image_url'];
+        $description  = $_POST['description'];;
 
-    $marque = $_POST['marque'];;
-    $modele = $_POST['modele'];
-    $prix = $_POST['prix_journalier'];;
-    $cat_id = $_POST['categorie_id'];;
-    $transmission  = $_POST['boite_vitesse'];;
-    $carburant = $_POST['carburant'];
-    $places = $_POST['nb_places'];
-    $image = $_POST['image_url'];
-    $description  = $_POST['description'];;
+
+        $newVeh  = new Vehicule(
+            $marque,
+            $modele,
+            $prix,
+            $image,
+            $cat_id,
+            $transmission,
+            $carburant,
+            $places,
+            $description
+
+        );
+
+        if ($newVeh->addVehicule()) {
+            header('Location: /admin/vehicules.php?success=1');
+            exit();
+        } else {
+            echo "Erreur lors de l'ajout";
+        }
+    }
 
 
-    $newVeh  = new Vehicule(
-        $marque,
-        $modele,
-        $prix,
-        $image,
-        $cat_id,
-        $transmission,
-        $carburant,
-        $places,
-        $description
+    if (isset($_POST["btn_update"])) {
 
-    );
+        $edit_id = $_POST["edit_id"];
 
-    if ($newVeh->addVehicule()) {
-        header('Location: /admin/vehicules.php?success=1');
-        exit();
-    } else {
-        echo "Erreur lors de l'ajout";
+        // 1. Retrieve data
+        $description = $_POST["description"];
+        $image_url = $_POST["image_url"]; // defined here
+        $places = $_POST["nb_places"];
+        $carburant = $_POST["carburant"];
+        $transmission = $_POST["boite_vitesse"];
+        $cat_id = $_POST["categorie_id"];
+        $prix = $_POST["prix_journalier"];
+        $modele = $_POST["modele"];
+        $marque = $_POST["marque"];
+
+        // 2. Debugging (Uncomment these if it still fails)
+        // var_dump($edit_id, $marque, $image_url); 
+        // die();
+
+        $updV = new Vehicule(
+            $marque,
+            $modele,
+            $prix,
+            $image_url, // <--- CHANGED THIS (was $image)
+            $cat_id,
+            $transmission,
+            $carburant,
+            $places,
+            $description,
+            true,
+            $edit_id
+        );
+
+        if ($updV->updateVeh()) {
+            header('Location: vehicules.php?success=update');
+            exit();
+        }
     }
 }
+
 
 
 
@@ -177,19 +220,19 @@ $vehicules = Vehicule::getAllVehicules();
                             </div>
 
                             <div class="flex justify-end gap-3">
-                                <button onclick="openEditModal(this)" 
-                                data-id="<?= $v->getId() ?>"
-                                data-marque="<?= $v->getMarque() ?>"
-                                data-model="<?= $v->getModele() ?>"
-                                data-prix="<?= $v->getPrixJournalier() ?>"
-                                data-cat="<?= $v->getCategorieId() ?>"
-                                data-transmission="<?= $v->getTransmission() ?>"
-                                data-carburant="<?= $v->getCarburant() ?>"
-                                data-nbrplaces="<?= $v->getNbPlaces() ?>"
-                                data-image="<?= $v->getImageUrl() ?>"
-                                data-desc="<?= $v->getDescription() ?>"
-                                
-                                class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-900 hover:text-white transition flex items-center justify-center shadow-sm">
+                                <button onclick="openEditModal(this)"
+                                    data-id="<?= $v->getId() ?>"
+                                    data-marque="<?= $v->getMarque() ?>"
+                                    data-model="<?= $v->getModele() ?>"
+                                    data-prix="<?= $v->getPrixJournalier() ?>"
+                                    data-cat="<?= $v->getCategorieId() ?>"
+                                    data-transmission="<?= $v->getTransmission() ?>"
+                                    data-carburant="<?= $v->getCarburant() ?>"
+                                    data-nbrplaces="<?= $v->getNbPlaces() ?>"
+                                    data-image="<?= $v->getImageUrl() ?>"
+                                    data-desc="<?= $v->getDescription() ?>"
+
+                                    class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-900 hover:text-white transition flex items-center justify-center shadow-sm">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
                                 <a href="delete_car.php?id=<?= $v->getId() ?>" onclick="return confirm('Supprimer ce véhicule ?')" class="w-10 h-10 bg-red-50 text-red-400 rounded-xl hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm">
@@ -282,7 +325,7 @@ $vehicules = Vehicule::getAllVehicules();
 
                 <div class="flex justify-end gap-4 pt-6 border-t border-gray-50">
                     <button type="button" onclick="toggleModal('addVehiculeModal')" class="font-bold text-gray-400 px-4">Annuler</button>
-                    <button type="submit" class="bg-red-600 text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-red-100 hover:bg-black transition-all">
+                    <button type="submit" name="btn_add" class="bg-red-600 text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-red-100 hover:bg-black transition-all">
                         Enregistrer le véhicule
                     </button>
                 </div>
@@ -311,85 +354,85 @@ $vehicules = Vehicule::getAllVehicules();
 
 
     <div id="editVehiculeModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-[40px] p-10 max-w-3xl w-full shadow-2xl modal-animate overflow-y-auto max-h-[90vh]">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-3xl font-black text-gray-900">Modifier <span class="text-red-600 italic">Véhicule.</span></h2>
-            <button onclick="toggleModal('editVehiculeModal')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+        <div class="bg-white rounded-[40px] p-10 max-w-3xl w-full shadow-2xl modal-animate overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-black text-gray-900">Modifier <span class="text-red-600 italic">Véhicule.</span></h2>
+                <button onclick="toggleModal('editVehiculeModal')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+
+            <form action="" method="POST" class="space-y-6">
+                <input type="hidden" name="edit_id" id="edit_id">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Marque</label>
+                        <input type="text" name="marque" id="edit_marque" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Modèle</label>
+                        <input type="text" name="modele" id="edit_modele" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Prix Journalier (€)</label>
+                        <input type="number" step="0.01" name="prix_journalier" id="edit_prix" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Catégorie</label>
+                        <select name="categorie_id" id="edit_cat" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-500 cursor-pointer">
+                            <option value="1">Citadine</option>
+                            <option value="2">SUV & 4x4</option>
+                            <option value="3">Luxe</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Boîte de vitesse</label>
+                        <select name="boite_vitesse" id="edit_boite" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-500">
+                            <option value="Automatique">Automatique</option>
+                            <option value="Manuelle">Manuelle</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Carburant</label>
+                        <select name="carburant" id="edit_carb" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-500">
+                            <option value="Diesel">Diesel</option>
+                            <option value="Essence">Essence</option>
+                            <option value="Électrique">Électrique</option>
+                            <option value="Hybride">Hybride</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Nombre de places</label>
+                        <input type="number" name="nb_places" id="edit_places" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">URL de l'image</label>
+                        <input type="text" name="image_url" id="edit_img" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none text-sm text-gray-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Description</label>
+                    <textarea name="description" id="edit_desc" rows="3" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-medium text-gray-700"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-4 pt-6 border-t border-gray-50">
+                    <button type="button" onclick="toggleModal('editVehiculeModal')" class="font-bold text-gray-400 px-4">Annuler</button>
+                    <button type="submit" name="btn_update" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-red-600 transition-all">
+                        Mettre à jour
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <form action="" method="POST" class="space-y-6">
-            <input type="hidden" name="edit_id" id="edit_id">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Marque</label>
-                    <input type="text" name="marque" id="edit_marque" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Modèle</label>
-                    <input type="text" name="modele" id="edit_modele" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Prix Journalier (€)</label>
-                    <input type="number" step="0.01" name="prix_journalier" id="edit_prix" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Catégorie</label>
-                    <select name="categorie_id" id="edit_cat" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-500 cursor-pointer">
-                        <option value="1">Citadine</option>
-                        <option value="2">SUV & 4x4</option>
-                        <option value="3">Luxe</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Boîte de vitesse</label>
-                    <select name="boite_vitesse" id="edit_boite" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-500">
-                        <option value="Automatique">Automatique</option>
-                        <option value="Manuelle">Manuelle</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Carburant</label>
-                    <select name="carburant" id="edit_carb" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-500">
-                        <option value="Diesel">Diesel</option>
-                        <option value="Essence">Essence</option>
-                        <option value="Électrique">Électrique</option>
-                        <option value="Hybride">Hybride</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Nombre de places</label>
-                    <input type="number" name="nb_places" id="edit_places" required class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-gray-700">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">URL de l'image</label>
-                    <input type="text" name="image_url" id="edit_img" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none text-sm text-gray-500">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Description</label>
-                <textarea name="description" id="edit_desc" rows="3" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 outline-none font-medium text-gray-700"></textarea>
-            </div>
-
-            <div class="flex justify-end gap-4 pt-6 border-t border-gray-50">
-                <button type="button" onclick="toggleModal('editVehiculeModal')" class="font-bold text-gray-400 px-4">Annuler</button>
-                <button type="submit" name="btn_update" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-red-600 transition-all">
-                    Mettre à jour
-                </button>
-            </div>
-        </form>
     </div>
-</div>
 
     <script>
         function toggleModal(modalId) {
@@ -405,7 +448,7 @@ $vehicules = Vehicule::getAllVehicules();
         }
 
 
-        function openEditModal(btn){
+        function openEditModal(btn) {
             toggleModal('editVehiculeModal');
             document.getElementById('edit_id').value = btn.getAttribute('data-id');
             document.getElementById('edit_marque').value = btn.getAttribute('data-marque');
@@ -418,9 +461,8 @@ $vehicules = Vehicule::getAllVehicules();
             document.getElementById('edit_img').value = btn.getAttribute('data-image');
             document.getElementById('edit_desc').value = btn.getAttribute('data-desc');
 
-            
-        }
 
+        }
     </script>
 
 </body>
