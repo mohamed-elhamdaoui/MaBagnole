@@ -68,7 +68,7 @@ class Vehicule
     {
         return $this->nb_places;
     }
-    public function isDisponible()
+    public function getDisponible()
     {
         return $this->disponible;
     }
@@ -149,10 +149,21 @@ class Vehicule
                 $row["transmission"],
                 $row["carburant"],
                 $row["nb_places"],
-                $row["description"]
+                $row["description"],
+                $row["is_active"],
+                $row["id"]
+
             );
         }
 
         return $arr;
+    }
+
+
+    public function updateVeh() {
+        $sql = "UPDATE vehicules set marque = ? , modele = ? ,prix_par_jour = ? , image = ? , categorie_id = ? ,transmission = ?  , carburant = ? , nb_places = ? , description = ? where id = ?  ";
+        $conn = DbConnection::getConnection();
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([$this->marque,$this->modele,$this->prix_journalier,$this->image_url,$this->categorie_id,$this->transmission,$this->carburant,$this->nb_places,$this->description,$this->id]);
     }
 }
