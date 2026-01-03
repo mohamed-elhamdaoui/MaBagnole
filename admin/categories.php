@@ -2,6 +2,11 @@
 require_once '../config.php';
 
 $categories = Categorie::getAll();
+
+foreach ($categories as $c ) {
+    echo $c->getId() ."<br>";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +89,7 @@ $categories = Categorie::getAll();
                     <p class="text-sm text-gray-400 leading-relaxed mb-8"><?= $categorie->getDescription() ?></p>
                     
                     <div class="flex justify-between items-center border-t pt-6">
-                        <span class="text-[10px] font-black text-gray-300 uppercase italic">12 Véhicules</span>
+                        <span class="text-[10px] font-black text-gray-300 uppercase italic"><?=  Vehicule::countByCategorie($categorie->getId()) ?> Véhicules</span>
                         <div class="flex gap-3">
                             <button class="text-blue-400 hover:text-blue-600 transition text-sm"><i class="fas fa-edit"></i></button>
                             <button class="text-red-300 hover:text-red-500 transition text-sm"><i class="fas fa-trash-alt"></i></button>
