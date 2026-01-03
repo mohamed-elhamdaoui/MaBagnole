@@ -1,3 +1,9 @@
+<?php
+require_once '../config.php';
+
+$categories = Categorie::getAll();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -67,13 +73,15 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <?php foreach($categories as $categorie): ?>
                 
                 <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 group hover:shadow-xl transition-all duration-300">
                     <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center text-xl mb-6 group-hover:bg-red-600 group-hover:text-white transition">
                         <i class="fas fa-bolt"></i>
                     </div>
-                    <h3 class="text-2xl font-black text-gray-900 uppercase italic mb-2 tracking-tighter">Citadines</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed mb-8">Petites voitures parfaites pour la conduite en centre-ville et le stationnement facile.</p>
+                    <h3 class="text-2xl font-black text-gray-900 uppercase italic mb-2 tracking-tighter"><?= $categorie->getNom(); ?></h3>
+                    <p class="text-sm text-gray-400 leading-relaxed mb-8"><?= $categorie->getDescription() ?></p>
                     
                     <div class="flex justify-between items-center border-t pt-6">
                         <span class="text-[10px] font-black text-gray-300 uppercase italic">12 Véhicules</span>
@@ -83,6 +91,8 @@
                         </div>
                     </div>
                 </div>
+
+                <?php endforeach; ?>
                 </div>
         </main>
     </div>
