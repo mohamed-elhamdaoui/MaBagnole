@@ -77,6 +77,15 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
             exit();
         }
     }
+
+
+    if (isset($_POST["btn_delete"])) {
+
+        Vehicule::softDeleteById($_POST["delete_id"]);
+
+        header("Location: vehicules.php?success=deleted");
+        exit();
+    }
 }
 
 
@@ -235,9 +244,14 @@ $vehicules = Vehicule::getAllVehicules();
                                     class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-900 hover:text-white transition flex items-center justify-center shadow-sm">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
-                                <a href="delete_car.php?id=<?= $v->getId() ?>" onclick="return confirm('Supprimer ce véhicule ?')" class="w-10 h-10 bg-red-50 text-red-400 rounded-xl hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm">
-                                    <i class="fas fa-trash-alt text-xs"></i>
-                                </a>
+                                <form method="POST" action=""
+                                    onsubmit="return confirm('Are you sure?')">
+                                    <input type="hidden" name="delete_id" value="<?= $v->getId() ?>">
+                                    <button type="submit" name="btn_delete" class="w-10 h-10 bg-red-50 text-red-400 rounded-xl hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </form>
+
                             </div>
                         </div>
                     </div>
