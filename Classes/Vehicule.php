@@ -185,4 +185,19 @@ class Vehicule
 
         return $stmt->execute([$id]);
     }
+
+    public static function countByCategorie($categorieId)
+    {
+        $pdo = DbConnection::getConnection();
+
+        $sql = "SELECT COUNT(*) 
+            FROM vehicules 
+            WHERE categorie_id = ? 
+              AND is_active = 1";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$categorieId]);
+
+        return (int) $stmt->fetchColumn();
+    }
 }
