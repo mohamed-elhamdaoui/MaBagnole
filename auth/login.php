@@ -26,9 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
             //diff between == / === in php !!!!!!!?
 
             if ($user->getRole() === 'admin') {
-                header('Location: ../admin/index.php');
+                header('Location: ../index.php');
             } else {
-                header('Location: ../client/dashboard.php');
+                header('Location: ../index.php');
             }
             exit();
         } else {

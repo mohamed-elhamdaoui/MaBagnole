@@ -27,11 +27,13 @@ class Categorie
         return $this->description;
     }
 
-    public function setNom($nom){
+    public function setNom($nom)
+    {
         $this->nom = $nom;
     }
-    public function setDescription($description){
-        $this->nom = $description;
+    public function setDescription($description)
+    {
+        $this->description = $description; 
     }
 
     // Méthode pour récupérer toutes les catégories (utile pour tes <select>)
@@ -39,6 +41,13 @@ class Categorie
     {
         $db = DbConnection::getConnection();
         $stmt = $db->query("SELECT * FROM categories ORDER BY nom ASC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $arr = [];
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            $arr[] = new Categorie($row["nom"],$row["description"],$row["id"]);
+        }
+
+        return $arr;
     }
+    
 }
