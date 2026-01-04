@@ -39,4 +39,6 @@ class Avis
 
         return round($row['avg_note'], 1);
     }
+
+
 }
