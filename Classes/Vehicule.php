@@ -200,4 +200,36 @@ class Vehicule
 
         return (int) $stmt->fetchColumn();
     }
+
+
+    public function getByCategoire($catId)
+    {
+        $sql = "SELECT * from vehicules where categorie_id = ?";
+        $db = DbConnection::getConnection();
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$catId]);
+
+        $arr = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $arr[] = new Vehicule($row["marque"], $row["modele"], $row["prix_par_jour"], $row["image"], $row["categorie_id"], $row["transmission"], $row["carburant"], $row["nb_places"], $row["description"], $row["is_active"]);
+        }
+
+        return $arr;
+    }
+
+
+    public static function findVehById($id){
+        $sql = "SELECT * from vehicules where id = ?";
+        $db = DbConnection::getConnection();
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$id]);
+        $v = $stmt->fetch(PDO::FETCH_ASSOC);
+        print_r($v);
+        
+        return  new Vehicule($v["marque"],modele: $v["modele"],prix: $v["prix_par_jour"],image: $v["image"],cat_id: $v["categorie_id"],transmission: $v["transmission"],carburant: $v["carburant"],places: $v["nb_places"],description: $v["description"],dispo: $v["is_active"], id: $v["id"]);
+
+        
+    }
 }
