@@ -1,5 +1,17 @@
+<?php
+require_once './config.php';
+
+$categories = Categorie::getAll();
+
+// foreach ($categories as $cat ) {
+//     echo $cat->getId();
+// }
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +20,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Smooth scrolling for the whole page */
-        html { scroll-behavior: smooth; }
-        
+        html {
+            scroll-behavior: smooth;
+        }
+
         /* Premium Hero background with a darker overlay */
-        .hero-gradient { 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(10,10,10,1)), 
-            url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920'); 
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(10, 10, 10, 1)),
+                url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920');
             background-size: cover;
             background-position: center;
         }
 
         /* Glass effect for the search bar */
-        .glass-search { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(15px); 
+        .glass-search {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
+
 <body class="bg-[#0a0a0a] font-sans text-white">
 
     <?php include 'includes/header.php'; ?>
@@ -35,7 +50,7 @@
             <h2 class="text-6xl md:text-8xl font-black text-white leading-tight mb-8 tracking-tighter">
                 PILOTEZ VOTRE <br><span class="text-red-600 italic">DESTIN.</span>
             </h2>
-            
+
             <form action="catalogue.php" method="GET" class="glass-search p-2 rounded-full shadow-2xl flex flex-col md:flex-row gap-2 max-w-4xl mx-auto">
                 <div class="flex-1 flex items-center px-8 py-4 border-r border-white/10">
                     <i class="fas fa-search text-red-600 mr-4"></i>
@@ -52,24 +67,29 @@
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <span class="text-red-600 font-black uppercase tracking-[0.3em] text-xs">Catégories</span>
-                <h3 class="text-4xl font-black mt-4 italic uppercase">Choisissez votre style</h3>
+                <h3 class="text-white text-4xl font-black mt-4 italic uppercase">Choisissez votre style</h3>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <?php 
-                $categories = [
-                    ['icon' => 'car-side', 'name' => 'Citadines', 'id' => 1],
-                    ['icon' => 'shuttle-van', 'name' => 'SUV & 4x4', 'id' => 2],
-                    ['icon' => 'motorcycle', 'name' => 'Motos', 'id' => 3],
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                <!-- $categories = [
+                    ['icon' => 'car', 'name' => 'Citadines', 'id' => 1],
+                    ['icon' => 'truck-pickup', 'name' => 'SUV & 4x4', 'id' => 2], // Updated icon
                     ['icon' => 'gem', 'name' => 'Luxe', 'id' => 4]
-                ];
+                ]; -->
+                <?php
+
+
                 foreach ($categories as $cat): ?>
-                <a href="catalogue.php?cat=<?= $cat['id'] ?>" class="group bg-neutral-900 border border-white/5 p-10 rounded-[40px] text-center hover:bg-red-600 transition-all duration-500">
-                    <div class="w-16 h-16 bg-white/5 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl group-hover:bg-white group-hover:scale-110 transition">
-                        <i class="fas fa-<?= $cat['icon'] ?>"></i>
-                    </div>
-                    <h4 class="font-black text-white uppercase tracking-tighter"><?= $cat['name'] ?></h4>
-                </a>
+                    <a href="catalogue.php?cat=<?= $cat->getId() ?>" class="group bg-neutral-900 border border-white/5 p-12 rounded-[40px] text-center hover:bg-red-600 transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                        <div class="w-20 h-20 bg-white/5 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:bg-white group-hover:scale-110 transition shadow-inner">
+                            <i class="fas fa-<?= $cat->getNom() == 'Citadine' ? 'car' : '' ?> "></i>
+                            <i class="fas fa-<?= $cat->getNom() == 'SUV & 4x4' ? 'truck-pickup' : '' ?> "></i>
+                            <i class="fas fa-<?= $cat->getNom() == 'Luxe' ? 'gem' : '' ?> "></i>
+                        </div>
+                        <h4 class="text-xl font-black text-white uppercase tracking-tighter"><?= $cat->getNom() ?></h4>
+                        <p class="text-xs text-gray-500 mt-2 font-bold group-hover:text-white/80 uppercase tracking-widest">Voir la collection</p>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -110,7 +130,7 @@
                         </a>
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
     </section>
 
@@ -119,4 +139,5 @@
     <?php include 'includes/footer.php'; ?>
 
 </body>
+
 </html>
