@@ -13,7 +13,7 @@ class Reservation
     private $total_prix;
 
     // Constructeur
-    public function __construct($user_id, $vehicule_id, $date_debut, $date_fin, $lieu_prise, $lieu_retour, $statut = 'en_attente', $total_prix = null, $id = null)
+    public function __construct($user_id, $vehicule_id, $date_debut, $date_fin, $lieu_prise, $lieu_retour, $total_prix = null, $statut = 'en_attente', $id = null)
     {
         $this->id = $id;
         $this->user_id = $user_id;
@@ -115,7 +115,23 @@ class Reservation
     }
 
 
+    public function saveReservation(){
+        $db = DbConnection::getConnection();
+
+        $sql = "INSERT into reservations (user_id,vehicule_id,date_debut,date_fin,lieu_prise,lieu_retour,total_prix)
+        VALUES (?,?,?,?,?,?,?)   ";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([$this->user_id,$this->vehicule_id,$this->date_debut,$this->date_fin,$this->lieu_prise,$this->lieu_retour,$this->total_prix]);
 
 
+
+    }
+
+
+    public static function getAllReservationByUser($id): ?array{
+        $db = DbConnection::getConnection();
+        $stmt = $db->query("select * FROM reservations r join users u on r.user_id = u.id JOIN vehicules v on r.vehicule_id = v.id where u.id = $id");
+        return $stmt->fetchAll();   
+    }
 
 }
